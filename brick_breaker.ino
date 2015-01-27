@@ -6,10 +6,10 @@ int x = 8;
 int y = 8;
 const byte BRICK_WIDTH = 16;
 const byte BRICK_HEIGHT = 8;
-const byte BRICK_OFFSET = 16;
+const byte BRICK_OFFSET =16;
 
 const byte MATRIX_WIDTH = 16;
-const byte MATRIX_HEIGHT = 24;
+const byte MATRIX_HEIGHT= 24;
 
 #define DATA 2
 #define WR   3
@@ -25,7 +25,6 @@ inline void pixelOut(byte x, byte y, byte v) {
 }
 
 byte brick[BRICK_HEIGHT][BRICK_WIDTH]; // [rows][columns]
-
  
 void setup() {
    memset(brick,1,sizeof(brick));
