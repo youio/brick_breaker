@@ -2,8 +2,8 @@
 #include <HT1632.h>
 int ran = 1;
 int rose = 1;
-int x = 8;
-int y = 8;
+int x = 0;
+int y = 4;
 const byte BRICK_WIDTH = 16;
 const byte BRICK_HEIGHT = 8;
 const byte BRICK_OFFSET =16;
@@ -20,16 +20,15 @@ const byte MATRIX_HEIGHT= 24;
 HT1632LEDMatrix matrix = HT1632LEDMatrix(DATA, WR, CS);
 
 inline void pixelOut(byte x, byte y, byte v) {
- //matrix.drawPixel(x, y, v); //normal
-  matrix.drawPixel(MATRIX_HEIGHT - x - 1, MATRIX_WIDTH - y - 1, v); //flipped
+ //matrix.drawPixel(y, x, v); //normal
+  matrix.drawPixel(MATRIX_HEIGHT - y - 1, MATRIX_WIDTH - x - 1, v); //flipped
 }
 
-byte brick[MATRIX_HEIGHT][5] = {    // [rows][columns]
- {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
- {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
- {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
- {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
- {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+byte brick[BRICK_WIDTH][BRICK_HEIGHT]; /*= {    // [rows][columns]
+ {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+ {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+ {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+};*/
 void setup() {
    memset(brick,1,sizeof(brick));
    matrix.begin(HT1632_COMMON_16NMOS);  
@@ -37,29 +36,37 @@ void setup() {
 
 void loop() {
  
-  y= y + rose;
-  x= x + ran;
-  
-   for(int x1 = 0; x1 <BRICK_HEIGHT; x1++) {
-   for(int y1 = 0; y1 < BRICK_WIDTH; y1++){
-    if(brick[x1][y1]) 
-    {
-    pixelOut(x1 + BRICK_OFFSET, y1, 1);
+  y += rose;
+  x += ran;
+  if( y >= BRICK_OFFSET ) {
+   
+    if(brick[x + ran][y]) 
+    { brick[x + ran][y] = 0
+    ran = -ran;
+    }
+    
+    if(brick[x][y + rose]) {
+      
+      brick[x][y + rose] = 0;
+      rose = -rose;
+    }
    }
- }
- }
-  if(y >= 15 || y <= 0) {
+  
+  }
+   
+
+  if(y  >= MATRIX_HEIGHT - 1 || y <= 0) {
    rose = - rose;
  }
- if(x >= 23) {
+ if(x >= MATRIX_WIDTH - 1 || x <= 0 ) {
    ran = -ran;
  }
- if(x <= 0) {
-   ran = -ran;
- }
+ 
   
-  //matrix.drawPixel(x, y, 1);
+ pixelOut(x, y, 1 );
    matrix.writeScreen();
   delay(100);
   matrix.clearScreen();
 }
+
+/* check future x and y if theres a block there it will flip it.

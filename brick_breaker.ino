@@ -31,30 +31,70 @@ void setup() {
    matrix.begin(HT1632_COMMON_16NMOS);  
 }
 
-void loop() {
- 
-  y= y + rose;
-  x= x + ran;
+void loop()
+{
   
-   for(int x1 = 0; x1 <BRICK_HEIGHT; x1++) {
-   for(int y1 = 0; y1 < BRICK_WIDTH; y1++){
-    if(brick[x1][y1]) 
-    {
-    pixelOut(x1 + BRICK_OFFSET, y1, 1);
+   byte checkD = 0;
+   byte checkY = 0;
+   byte checkX = 0;
+   byte checkW = 0;
+   if(y >= 15 || y <= 0)
+   {
+     checkW = checkY = 1;
    }
- }
- }
-  if(y >= 15 || y <= 0) {
-   rose = - rose;
- }
- if(x >= 23) {
-   ran = -ran;
- }
- if(x <= 0) {
-   ran = -ran;
- }
+   else
+   {
+     checkY = brick[x][y+rose];
+   }
+ 
+   if(x >= 23 || x <= 0)
+   {  
+     checkW = checkX = 1;
+   }
+   else
+   {
+     checkX = brick[x+ran][y];
+   }
+   if(checkW) 
+   { 
+     checkD = 1;
+   }
+   else
+   {
+     checkD = brick[x+ran][y+ rose];
+   }
+
   
+  
+  if(checkD) 
+  {
+     if( !checkX && !checkY)
+     {
+       checkX = checkY = 1;
+     }
+     
+    if(checkY) 
+    {
+      if(!checkW)
+      { 
+        brick[x][y+rose] = 0;
+      }
+      rose = -rose;
+    }
+    if(checkX)
+    {
+      if(!checkW) 
+      {
+        brick[x+ran][y] = 0;
+      }
+      ran = -ran; 
+    }
+  }
+
+    y= y + rose;
+  x= x + ran;
   //matrix.drawPixel(x, y, 1);
+  pixelOut(x, y, 1 );
    matrix.writeScreen();
   delay(100);
   matrix.clearScreen();
