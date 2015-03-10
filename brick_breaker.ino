@@ -27,6 +27,7 @@ inline void pixelOut(byte x, byte y, byte v) {
 byte brick[BRICK_HEIGHT][BRICK_WIDTH]; // [rows][columns]
  
 void setup() {
+  Serial.begin(9600);
    memset(brick,1,sizeof(brick));
    matrix.begin(HT1632_COMMON_16NMOS);  
 }
@@ -38,22 +39,25 @@ void loop()
    byte checkY = 0;
    byte checkX = 0;
    byte checkW = 0;
-   if(y >= 15 || y <= 0)
+   if(y >= MATRIX_WIDTH - 1 || y <= 0)
    {
      checkW = checkY = 1;
+    
    }
    else
    {
      checkY = brick[x][y+rose];
+
    }
  
-   if(x >= 23 || x <= 0)
+   if(x >= MATRIX_HEIGHT- 1 || x <= 0)
    {  
      checkW = checkX = 1;
    }
    else
    {
      checkX = brick[x+ran][y];
+     
    }
    if(checkW) 
    { 
@@ -67,35 +71,34 @@ void loop()
   
   
   if(checkD) 
+  
   {
      if( !checkX && !checkY)
      {
-       checkX = checkY = 1;
+      // checkX = checkY = 1;
      }
-     
+    if(!checkW)
+    { 
+      brick[x+ ran][y+rose] = 0;
+    }
     if(checkY) 
     {
-      if(!checkW)
-      { 
-        brick[x][y+rose] = 0;
-      }
       rose = -rose;
     }
     if(checkX)
     {
-      if(!checkW) 
-      {
-        brick[x+ran][y] = 0;
-      }
       ran = -ran; 
     }
-  }
+  
+ }
 
-    y= y + rose;
-  x= x + ran;
+    y = y + rose;
+    x = x + ran;
   //matrix.drawPixel(x, y, 1);
   pixelOut(x, y, 1 );
    matrix.writeScreen();
   delay(100);
   matrix.clearScreen();
+  
+  
 }
